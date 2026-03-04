@@ -1,0 +1,6 @@
+@Gerenciador_de_tarefas.API_HostAddress = http://localhost:5027
+
+GET {{Gerenciador_de_tarefas.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
