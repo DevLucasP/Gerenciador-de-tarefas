@@ -11,4 +11,9 @@
     <ProjectReference Include="..\Gerenciador-de-tarefas.Communication\Gerenciador-de-tarefas.Communication.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+  </ItemGroup>
+
 </Project>
