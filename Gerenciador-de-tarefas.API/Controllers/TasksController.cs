@@ -11,7 +11,7 @@ namespace Gerenciador_de_tarefas.API.Controllers
         private readonly TaskDbContext _context;
 
         public TasksController(TaskDbContext context) => _context = context;
-
+        
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -22,7 +22,7 @@ namespace Gerenciador_de_tarefas.API.Controllers
                 return NoContent();
             return Ok(task);
         }
-
-        //Proximos passos: 1) Criar demais endpoints e habilitar comentários xml
+        
+        //Proximo passo: Criar demais endpoints
     }
 }
