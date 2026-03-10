@@ -1,5 +1,7 @@
 ﻿using Gerenciador_de_tarefas.Application.Data;
+using Gerenciador_de_tarefas.Application.Entities;
 using Gerenciador_de_tarefas.Communication.Dtos;
+using Gerenciador_de_tarefas.Communication.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +29,42 @@ namespace Gerenciador_de_tarefas.API.Controllers
             var task = await _context.Tasks.ToListAsync();
             if (task.Count == 0)
                 return NoContent();
+            return Ok(task);
+        }
+
+        /// <summary>
+        /// Busca uma tarefa específica pelo identificador.
+        /// </summary>
+        /// <param name="id">
+        /// Identificador único (GUID) da tarefa.
+        /// </param>
+        /// <remarks>
+        /// Exemplo de requisição:
+        ///
+        ///     GET /api/tasks/{id}
+        ///
+        /// Exemplo:
+        ///
+        ///     GET /api/tasks/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        ///
+        /// </remarks>
+        /// <returns>
+        /// Retorna 200 com os dados da tarefa caso ela exista.
+        /// Retorna 404 caso a tarefa não seja encontrada.
+        /// </returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            // Busca a tarefa no banco pelo Id
+            var task = await _context.Tasks.FindAsync(id);
+
+            // Caso não exista, retorna 404
+            if (task == null)
+                return NotFound("Tarefa não encontrada.");
+
+            // Caso exista, retorna 200 com os dados
             return Ok(task);
         }
 
@@ -131,6 +169,55 @@ namespace Gerenciador_de_tarefas.API.Controllers
             return NoContent();
         }
 
-        //Próximo passo: criar endpoint para deletar uma tarefa e outro para criar uma nova tarefa, comentar e testar usando o Swagger
+        /// <summary>
+        /// Cria uma nova tarefa.
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de requisição:
+        ///
+        ///     POST /api/tasks
+        ///     {
+        ///         "name": "Estudar ASP.NET",
+        ///         "description": "Aprender controllers e EF Core",
+        ///         "priority": 1,
+        ///         "dueDate": "2026-03-10T00:00:00Z",
+        ///         "status": 0
+        ///     }
+        ///
+        /// </remarks>
+        /// <returns>
+        /// Retorna 201 quando a tarefa é criada com sucesso.
+        /// </returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create([FromBody] CreateTaskDto dto)
+        {
+            // Verifica se o modelo recebido é válido
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Cria a entidade Task com base no Dto recebido
+            var task = new TaskEntity
+            {
+                Id = Guid.NewGuid(), // gera um identificador único
+                Name = dto.Name,
+                Description = dto.Description,
+                Priority = dto.Priority,
+                DueDate = dto.DueDate,
+                Status = dto.Status
+            };
+
+            // Adiciona a tarefa ao contexto
+            await _context.Tasks.AddAsync(task);
+
+            // Salva no banco de dados
+            await _context.SaveChangesAsync();
+
+            // Retorna 201 Created informando que a tarefa foi criada
+            return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
+        }
+
+        //Próximo passo: criar endpoint para deletar uma tarefa, comentar/testar usando o Swagger e Postman/Insomnia (decidir ainda).
     }
 }
