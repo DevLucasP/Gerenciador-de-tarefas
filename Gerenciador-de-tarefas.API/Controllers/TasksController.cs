@@ -191,11 +191,16 @@ namespace Gerenciador_de_tarefas.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateTaskDto dto)
+        public async Task<IActionResult> CreateTask([FromBody] CreateTaskDto dto)
         {
             // Verifica se o modelo recebido é válido
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            // Validação de regra de negócio:
+            // Não permitir tarefas com data no passado
+            if (dto.DueDate.Date < DateTime.UtcNow.Date)
+                return BadRequest("Erro: a data da tarefa não pode estar no passado.");
 
             // Cria a entidade Task com base no Dto recebido
             var task = new TaskEntity
