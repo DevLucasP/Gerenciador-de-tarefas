@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gerenciador_de_tarefas.Application.Migrations
 {
     [DbContext(typeof(TaskDbContext))]
-    [Migration("20260306172648_InitialCreate")]
+    [Migration("20260310005704_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -34,7 +34,7 @@ namespace Gerenciador_de_tarefas.Application.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DuoDate")
+                    b.Property<DateTime>("DueDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
